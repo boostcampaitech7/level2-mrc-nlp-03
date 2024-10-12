@@ -22,6 +22,7 @@ from transformers import (
     set_seed,
 )
 from utils_qa import check_no_error, postprocess_qa_predictions
+from prepare_dataset import prepare_dataset
 
 logger = logging.getLogger(__name__)
 
@@ -69,7 +70,7 @@ def main(config):
     # 모델을 초기화하기 전에 난수를 고정합니다.
     set_seed(training_args.seed)
 
-    datasets = load_from_disk(data_args.train_dataset_name)
+    datasets = prepare_dataset(data_args.data_type, data_args.train_dataset_name)
     print(datasets)
 
     # AutoConfig를 이용하여 pretrained model 과 tokenizer를 불러옵니다.
@@ -312,7 +313,11 @@ def run_mrc(
     metric = load_metric("squad")
 
     def compute_metrics(p: EvalPrediction):
-        return metric.compute(predictions=p.predictions, references=p.label_ids)
+        metrics = metric.compute(predictions=p.predictions, references=p.label_ids)
+        exact_match = metrics['exact_match']
+        f1 = metrics['f1']
+        
+        return {'eval_exact_match' : exact_match, 'eval_f1' : f1}
 
     # Trainer 초기화
     trainer = QuestionAnsweringTrainer(
