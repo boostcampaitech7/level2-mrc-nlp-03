@@ -12,6 +12,8 @@ $ pip install rank-bm25 # bm25 설치 (requirements.txt에도 추가해둠)
 - base_config.yaml 방식으로 변경 (기존 arguments.py 삭제)
 - 실행시킬 때, --config_path를 뒤에 붙여서 적용할 config 선택 가능
 - BM25Retrieval 방식 추가
+- config.data.data_type에서 사용할 데이터셋 지정 가능 (fine tuning 그나마 좀 편하도록 작성)
+- 기존 eval_step 도달하여 evaluate할때, compute_metrics부분에서 나타나는 에러 해결
 
 
 ### 2. 사용법
@@ -28,11 +30,16 @@ $ python inference.py --config_path config/base_config.yaml
   retrieval할 때마다, 4분이 걸려서 scores 자체를 저장하는 방식도 고려해봐야 될 것 같습니다.  
   현재, BM25OKapi 객체를 pickle로는 저장할 수 있도록 코드를 구현한 상태입니다.
 - roberta-large로 추론할 경우, topk=40을 모두 이어붙였더니 추론시간이 약 19분 걸립니다.
-- 모듈화는 5기생 5조 github 코드에서 아이디어를 가져왔고 코드를 참고하였습니다. BM25도 5조 github 코드를 참고하여 필요한 부분만 참고하였습니다. 다만, 모든 코드는 베이스라인 위에서 직접 수정하며 구현했습니다.
+- 모듈화는 5기생 5조 github 코드에서 아이디어를 가져왔고 코드를 참고하였습니다. BM25도 5조 github 코드를 참고하여 필요한 부분만 참고하였습니다. 다만, 모든 코드는 베이스라인 위에서 직접 수정하며 구현했습니다. prepare_dataset.py도 5조 아이디어에서 착안.
+- roberta-large에 KorQuAD 1.0 1에폭 훈련시켰더니 훈련시간 1시간 나옵니다. (배치 16 기준)
+- 1차로는 korquad, max_epoch 1, learning_rate 3e-5, step설정 1000으로
+- 2차로는 original, max_epoch 4, learning_rate 9e-6, step설정 500으로 해서 진행하는게 좋을 것 같은 느낌..
 
 ### 4. config 설정법
 - model_name_or_path: 사용할 모델명이나 사용할 모델 경로
 - retrieval_tokenizer: BM25로 retrieve할때만 쓸 토크나이저명
+- retrieval_type: (tfidf, bm25) 중 택1. Retrieve 방식 선택.
+- data_type: Reader모델 훈련시 어떤 데이터셋을 사용할 것인지 선택. (original, korquad, korquad_hard) 중 택1. 자세한 것은 prepare_dataset.py 참고.
 - 그 외 설정들은 알아서 잘 조절하세요.
 
 ### 5. 디렉토리 구조
@@ -55,6 +62,7 @@ level2-mrc-nlp-03/code/
 |-- wandb
 |
 |-- inference.py
+|-- prepare_dataset.py
 |-- requirements.txt
 |-- train.py
 |-- trainer_qa.py
