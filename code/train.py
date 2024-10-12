@@ -1,12 +1,15 @@
 import logging
 import os
 import sys
+import wandb
 import random
 import numpy as np
 import torch
 from typing import NoReturn
+import argparse
+from omegaconf import OmegaConf
+from omegaconf import DictConfig
 
-from arguments import DataTrainingArguments, ModelArguments
 from datasets import DatasetDict, load_from_disk, load_metric
 from trainer_qa import QuestionAnsweringTrainer
 from transformers import (
@@ -15,44 +18,43 @@ from transformers import (
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    HfArgumentParser,
     TrainingArguments,
     set_seed,
 )
 from utils_qa import check_no_error, postprocess_qa_predictions
 
-
-seed = 2024
-deterministic = False
-
-random.seed(seed) # python random seed 고정
-np.random.seed(seed) # numpy random seed 고정
-torch.manual_seed(seed) # torch random seed 고정
-torch.cuda.manual_seed_all(seed)
-if deterministic: # cudnn random seed 고정 - 고정 시 학습 속도가 느려질 수 있습니다. 
-	torch.backends.cudnn.deterministic = True
-	torch.backends.cudnn.benchmark = False
-
-
 logger = logging.getLogger(__name__)
 
 
-def main():
-    # 가능한 arguments 들은 ./arguments.py 나 transformer package 안의 src/transformers/training_args.py 에서 확인 가능합니다.
-    # --help flag 를 실행시켜서 확인할 수 도 있습니다.
-
-    parser = HfArgumentParser(
-        (ModelArguments, DataTrainingArguments, TrainingArguments)
+def main(config):
+    model_args, data_args, tr_args = config.model, config.data, config.train
+    
+    training_args = TrainingArguments(
+        output_dir=tr_args.train_output_dir,
+        do_train=tr_args.do_train,
+        do_eval=tr_args.do_eval,
+        save_total_limit=1,
+        num_train_epochs=tr_args.max_epoch,
+        learning_rate=tr_args.learning_rate,
+        per_device_train_batch_size=tr_args.batch_size,
+        per_device_eval_batch_size=tr_args.batch_size,
+        evaluation_strategy="steps",
+        gradient_accumulation_steps=tr_args.gradient_accumulation,
+        eval_steps=tr_args.eval_step,
+        logging_steps=tr_args.logging_step,
+        save_steps=tr_args.save_step,
+        load_best_model_at_end=True,
+        metric_for_best_model='exact_match'
     )
-    model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    print(model_args.model_name_or_path)
 
-    # [참고] argument를 manual하게 수정하고 싶은 경우에 아래와 같은 방식을 사용할 수 있습니다
-    # training_args.per_device_train_batch_size = 4
-    # print(training_args.per_device_train_batch_size)
+    if config.wandb.use:
+        wandb.init(project=config.wandb.project, name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
+        training_args.report_to = ["wandb"]
+    else:
+        wandb.init(should_run=False)
 
     print(f"model is from {model_args.model_name_or_path}")
-    print(f"data is from {data_args.dataset_name}")
+    print(f"data is from {data_args.train_dataset_name}")
 
     # logging 설정
     logging.basicConfig(
@@ -67,7 +69,7 @@ def main():
     # 모델을 초기화하기 전에 난수를 고정합니다.
     set_seed(training_args.seed)
 
-    datasets = load_from_disk(data_args.dataset_name)
+    datasets = load_from_disk(data_args.train_dataset_name)
     print(datasets)
 
     # AutoConfig를 이용하여 pretrained model 과 tokenizer를 불러옵니다.
@@ -81,9 +83,6 @@ def main():
         model_args.tokenizer_name
         if model_args.tokenizer_name is not None
         else model_args.model_name_or_path,
-        # 'use_fast' argument를 True로 설정할 경우 rust로 구현된 tokenizer를 사용할 수 있습니다.
-        # False로 설정할 경우 python으로 구현된 tokenizer를 사용할 수 있으며,
-        # rust version이 비교적 속도가 빠릅니다.
         use_fast=True,
     )
     model = AutoModelForQuestionAnswering.from_pretrained(
@@ -106,9 +105,9 @@ def main():
 
 
 def run_mrc(
-    data_args: DataTrainingArguments,
+    data_args: DictConfig,
     training_args: TrainingArguments,
-    model_args: ModelArguments,
+    model_args: DictConfig,
     datasets: DatasetDict,
     tokenizer,
     model,
@@ -146,7 +145,7 @@ def run_mrc(
             stride=data_args.doc_stride,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
-            # return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
+            return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
             padding="max_length" if data_args.pad_to_max_length else False,
         )
 
@@ -238,7 +237,7 @@ def run_mrc(
             stride=data_args.doc_stride,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
-            # return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
+            return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
             padding="max_length" if data_args.pad_to_max_length else False,
         )
 
@@ -372,4 +371,10 @@ def run_mrc(
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "--config_path", default="config/base_config.yaml", type=str, help=""
+    )
+    arg = parser.parse_args()
+    config = OmegaConf.load(arg.config_path)
+    main(config)

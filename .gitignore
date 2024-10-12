@@ -112,6 +112,7 @@ data_/
 input/
 saved/
 datasets/
+models/
 
 # editor, os cache directory
 .vscode/
