@@ -52,7 +52,7 @@ def main(config):
         wandb.init(project=config.wandb.project, name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
         training_args.report_to = ["wandb"]
     else:
-        wandb.init(should_run=False)
+        wandb.init(mode="disabled")
 
     print(f"model is from {model_args.model_name_or_path}")
     print(f"data is from {data_args.train_dataset_name}")
