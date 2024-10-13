@@ -34,7 +34,7 @@ def main(config):
         output_dir=tr_args.train_output_dir,
         do_train=tr_args.do_train,
         do_eval=tr_args.do_eval,
-        save_total_limit=1,
+        save_total_limit=tr_args.save_total_limit,
         num_train_epochs=tr_args.max_epoch,
         learning_rate=tr_args.learning_rate,
         per_device_train_batch_size=tr_args.batch_size,
@@ -341,7 +341,7 @@ def run_mrc(
             checkpoint = model_args.model_name_or_path
         else:
             checkpoint = None
-        train_result = trainer.train(resume_from_checkpoint=checkpoint)
+        train_result = trainer.train() # resume_from_checkpoint=checkpoint 인자가 원래 있었는데 모델 이어서 학습시 오류발생해서 사용안함
         trainer.save_model()  # Saves the tokenizer too for easy upload
 
         metrics = train_result.metrics

@@ -47,7 +47,7 @@ def main(config):
         do_train=tr_args.do_train,
         do_eval=tr_args.do_eval,
         do_predict=tr_args.do_predict,
-        save_total_limit=1,
+        save_total_limit=tr_args.save_total_limit,
         num_train_epochs=tr_args.max_epoch,
         learning_rate=tr_args.learning_rate,
         per_device_train_batch_size=tr_args.batch_size,

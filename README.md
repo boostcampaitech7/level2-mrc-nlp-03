@@ -14,6 +14,8 @@ $ pip install rank-bm25 # bm25 설치 (requirements.txt에도 추가해둠)
 - BM25Retrieval 방식 추가
 - config.data.data_type에서 사용할 데이터셋 지정 가능 (fine tuning 그나마 좀 편하도록 작성)
 - 기존 eval_step 도달하여 evaluate할때, compute_metrics부분에서 나타나는 에러 해결
+- save_total_limit 추가하여 모델 저장개수 config에서 지정가능하게 변경
+- 모델 이어서 학습시킬 수 있도록 에러 해결 (model_name_path에 모델 경로 넣어주면 훈련가능. 당연히 추론도 가능)
 
 
 ### 2. 사용법
@@ -40,6 +42,7 @@ $ python inference.py --config_path config/base_config.yaml
 - retrieval_tokenizer: BM25로 retrieve할때만 쓸 토크나이저명
 - retrieval_type: (tfidf, bm25) 중 택1. Retrieve 방식 선택.
 - data_type: Reader모델 훈련시 어떤 데이터셋을 사용할 것인지 선택. (original, korquad, korquad_hard) 중 택1. 자세한 것은 prepare_dataset.py 참고.
+- save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
 - 그 외 설정들은 알아서 잘 조절하세요.
 
 ### 5. 디렉토리 구조
@@ -69,5 +72,6 @@ level2-mrc-nlp-03/code/
 |-- utils_qa.py
 ```
 
-
-> 에러 발생시 Issue로 빠르게 알려주시면 감사하겠습니다.
+> 에러 발생시 Issue로 빠르게 알려주시면 감사하겠습니다.   
+> 실험결과나 아이디어 관련해서는 Notion을 참고해주세요.  
+> 해당 실험시, config와 결과값, 실행방법은 모두 Notion에 적어두었습니다.

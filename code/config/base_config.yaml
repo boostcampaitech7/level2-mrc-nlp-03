@@ -1,5 +1,5 @@
 model:
-  model_name_or_path: klue/roberta-large # klue/roberta-large # models/roberta_original 훈련할때 쓸 모델명이나, 이어서 훈련하거나 추론할 모델경로
+  model_name_or_path: models/roberta_finetune # klue/roberta-large # models/roberta_original 훈련할때 쓸 모델명이나, 이어서 훈련하거나 추론할 모델경로
   config_name: null
   tokenizer_name: null
   retrieval_tokenizer: monologg/koelectra-base-v3-finetuned-korquad # BM25로 retrieve할때만 쓰는 토크나이저 이름
@@ -18,24 +18,25 @@ data:
   top_k_retrieval: 40
   use_faiss: False
   retrieval_type: bm25 # tfidf, bm25
-  data_type: korquad # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
+  data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
 
 train:
   batch_size: 16
-  max_epoch: 1
-  learning_rate: 3e-5 #9.0e-6
-  eval_step: 1 # 000 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
-  logging_step: 1000 # 500
-  save_step: 1000
+  max_epoch: 4
+  learning_rate: 9e-6 #3e-5 #9.0e-6
+  eval_step: 500 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
+  logging_step: 500 # 1000 # 500
+  save_step: 500
   gradient_accumulation: 1
-  do_train: True
+  do_train: False
   do_eval: False
-  do_predict: False
-  train_output_dir: models/test # roberta_korquad
-  inference_output_dir: outputs/roberta_korquad
+  do_predict: True
+  train_output_dir: models/roberta_finetune # roberta_korquad
+  inference_output_dir: outputs/roberta_finetune
   seed: 42
+  save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
 
 wandb:
   use: True
   project: odqa
-  name: korquad # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
+  name: roberta_finetune # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
