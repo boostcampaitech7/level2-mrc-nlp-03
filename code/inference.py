@@ -142,7 +142,7 @@ def run_sparse_retrieval(
                     length=-1,
                     id=None,
                 ),
-                "original_context": Value(dtype="string", id=None)
+                "original_context": Value(dtype="string", id=None),
                 "context": Value(dtype="string", id=None),
                 "id": Value(dtype="string", id=None),
                 "question": Value(dtype="string", id=None),
