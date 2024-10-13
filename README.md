@@ -71,6 +71,14 @@ level2-mrc-nlp-03/code/
 |-- trainer_qa.py
 |-- utils_qa.py
 ```
+```Bash
+level2-mrc-nlp-03/data/
+|
+|-- test_dataset
+|-- train_dataset
+|-- bm25_model.bin # bm25로 retrieval 실시할때 생기는 파일
+|-- wikipedia_documents.json
+```
 
 > 에러 발생시 Issue로 빠르게 알려주시면 감사하겠습니다.   
 > 실험결과나 아이디어 관련해서는 Notion을 참고해주세요.  
