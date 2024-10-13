@@ -65,7 +65,7 @@ level2-mrc-nlp-03/code/
 |-- wandb
 |
 |-- inference.py
-|-- prepare_dataset.py
+|-- prepare_dataset.py # config에서 설정한 data_type에 따라 dataset을 반환해줌 (KorQuAD 1.0 사용할지, 기존 데이터셋 이용할지 등..)
 |-- requirements.txt
 |-- train.py
 |-- trainer_qa.py
