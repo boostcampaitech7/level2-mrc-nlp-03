@@ -52,7 +52,7 @@ class BM25Retrieval:
             Passage 파일을 불러오고 TfidfVectorizer를 선언하는 기능을 합니다.
         """
 
-        self.tokenizer = tokenize_fn
+        self.tokenize_fn = tokenize_fn
         self.data_path = data_path
         with open(os.path.join(data_path, context_path), "r", encoding="utf-8") as f:
             wiki = json.load(f)
@@ -84,7 +84,7 @@ class BM25Retrieval:
             print("Embedding pickle load.")
         else:
             print("Build passage embedding")
-            tokenized_corpus = [self.tokenizer(doc) for doc in self.contexts]
+            tokenized_corpus = [self.tokenize_fn(doc) for doc in self.contexts]
             self.bm25 = BM25Okapi(tokenized_corpus)
             
             with open(emd_path, "wb") as file:
@@ -168,7 +168,7 @@ class BM25Retrieval:
             vocab 에 없는 이상한 단어로 query 하는 경우 assertion 발생 (예) 뙣뙇?
         """
 
-        tokenized_query = self.tokenizer([query])
+        tokenized_query = self.tokenize_fn([query])
         result = np.array([self.bm25.get_scores(query) for query in tokenized_query])
 
         sorted_result = np.argsort(result.squeeze())[::-1]
@@ -183,20 +183,35 @@ class BM25Retrieval:
         """
         Arguments:
             queries (List):
-                하나의 Query를 받습니다.
+                Query List를 받습니다.
             k (Optional[int]): 1
                 상위 몇 개의 Passage를 반환할지 정합니다.
-        Note:
-            vocab 에 없는 이상한 단어로 query 하는 경우 assertion 발생 (예) 뙣뙇?
         """
 
-        tokenized_query = [self.tokenizer(query) for query in list(queries)]
-        result = np.array([self.bm25.get_scores(query) for query in tqdm(tokenized_query)])
+        # bm25 scores와 indices 저장
+        pickle_name = f"bm25_scores_indices.bin"
+        emd_path = os.path.join(self.data_path, pickle_name)
 
-        doc_scores = []
-        doc_indices = []
-        for scores in tqdm(result):
-            sorted_result = np.argsort(scores)[-k:][::-1]
-            doc_scores.append(scores[sorted_result].tolist())
-            doc_indices.append(sorted_result.tolist())
-        return doc_scores, doc_indices
+        if os.path.isfile(emd_path):
+            with open(emd_path, "rb") as file:
+                doc_scores, doc_indices = pickle.load(file)
+            return doc_scores, doc_indices
+        else:
+            print("Search bm25 scores and indices")
+
+            tokenized_query = [self.tokenize_fn(query) for query in list(queries)]
+            result = np.array([self.bm25.get_scores(query) for query in tqdm(tokenized_query)])
+
+            doc_scores = []
+            doc_indices = []
+            for scores in tqdm(result):
+                sorted_result = np.argsort(scores)[-k:][::-1]
+                doc_scores.append(scores[sorted_result].tolist())
+                doc_indices.append(sorted_result.tolist())
+            
+            with open(emd_path, "wb") as file:
+                pickle.dump((doc_scores, doc_indices), file)
+            print("bm25_scores_indices pickle saved.")
+
+            return doc_scores, doc_indices
+            
