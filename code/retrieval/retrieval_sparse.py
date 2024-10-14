@@ -11,13 +11,8 @@ import numpy as np
 import pandas as pd
 from datasets import Dataset, concatenate_datasets, load_from_disk
 from sklearn.feature_extraction.text import TfidfVectorizer
+from omegaconf import OmegaConf
 from tqdm.auto import tqdm
-
-seed = 2024
-random.seed(seed) # python random seed 고정
-np.random.seed(seed) # numpy random seed 고정
-
-
 
 @contextmanager
 def timer(name):
