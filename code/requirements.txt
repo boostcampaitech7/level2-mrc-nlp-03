@@ -4,6 +4,8 @@ transformers==4.25.1
 tqdm
 pandas
 scikit-learn
+omegaconf
+rank-bm25
 
 # faiss install (if you want to)
-faiss-gpu
+# faiss-gpu

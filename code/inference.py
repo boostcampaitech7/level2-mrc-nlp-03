@@ -8,9 +8,11 @@ Open-Domain Question Answering 을 수행하는 inference 코드 입니다.
 import logging
 import sys
 from typing import Callable, Dict, List, NoReturn, Tuple
+import argparse
+from omegaconf import OmegaConf
+from omegaconf import DictConfig
 
 import numpy as np
-from arguments import DataTrainingArguments, ModelArguments
 from datasets import (
     Dataset,
     DatasetDict,
@@ -20,7 +22,8 @@ from datasets import (
     load_from_disk,
     load_metric,
 )
-from retrieval import SparseRetrieval
+from retrieval.retrieval_sparse import SparseRetrieval
+from retrieval.retrieval_bm25 import BM25Retrieval
 from trainer_qa import QuestionAnsweringTrainer
 from transformers import (
     AutoConfig,
@@ -28,7 +31,6 @@ from transformers import (
     AutoTokenizer,
     DataCollatorWithPadding,
     EvalPrediction,
-    HfArgumentParser,
     TrainingArguments,
     set_seed,
 )
@@ -37,19 +39,32 @@ from utils_qa import check_no_error, postprocess_qa_predictions
 logger = logging.getLogger(__name__)
 
 
-def main():
-    # 가능한 arguments 들은 ./arguments.py 나 transformer package 안의 src/transformers/training_args.py 에서 확인 가능합니다.
-    # --help flag 를 실행시켜서 확인할 수 도 있습니다.
-
-    parser = HfArgumentParser(
-        (ModelArguments, DataTrainingArguments, TrainingArguments)
+def main(config):
+    model_args, data_args, tr_args = config.model, config.data, config.train
+    
+    training_args = TrainingArguments(
+        output_dir=tr_args.inference_output_dir,
+        do_train=tr_args.do_train,
+        do_eval=tr_args.do_eval,
+        do_predict=tr_args.do_predict,
+        save_total_limit=tr_args.save_total_limit,
+        num_train_epochs=tr_args.max_epoch,
+        learning_rate=tr_args.learning_rate,
+        per_device_train_batch_size=tr_args.batch_size,
+        per_device_eval_batch_size=tr_args.batch_size,
+        evaluation_strategy="steps",
+        gradient_accumulation_steps=tr_args.gradient_accumulation,
+        eval_steps=tr_args.eval_step,
+        logging_steps=tr_args.logging_step,
+        save_steps=tr_args.save_step,
+        load_best_model_at_end=True,
+        metric_for_best_model='exact_match'
     )
-    model_args, data_args, training_args = parser.parse_args_into_dataclasses()
 
     training_args.do_train = True
 
     print(f"model is from {model_args.model_name_or_path}")
-    print(f"data is from {data_args.dataset_name}")
+    print(f"data is from {data_args.inference_dataset_name}")
 
     # logging 설정
     logging.basicConfig(
@@ -64,7 +79,7 @@ def main():
     # 모델을 초기화하기 전에 난수를 고정합니다.
     set_seed(training_args.seed)
 
-    datasets = load_from_disk(data_args.dataset_name)
+    datasets = load_from_disk(data_args.inference_dataset_name)
     print(datasets)
 
     # AutoConfig를 이용하여 pretrained model 과 tokenizer를 불러옵니다.
@@ -86,10 +101,12 @@ def main():
         config=config,
     )
 
+    retrieval_tokenizer = AutoTokenizer.from_pretrained(model_args.retrieval_tokenizer)
+
     # True일 경우 : run passage retrieval
     if data_args.eval_retrieval:
         datasets = run_sparse_retrieval(
-            tokenizer.tokenize, datasets, training_args, data_args,
+            retrieval_tokenizer.tokenize, datasets, training_args, data_args,
         )
 
     # eval or predict mrc model
@@ -101,24 +118,20 @@ def run_sparse_retrieval(
     tokenize_fn: Callable[[str], List[str]],
     datasets: DatasetDict,
     training_args: TrainingArguments,
-    data_args: DataTrainingArguments,
+    data_args: DictConfig,
     data_path: str = "../data",
     context_path: str = "wikipedia_documents.json",
 ) -> DatasetDict:
 
-    # Query에 맞는 Passage들을 Retrieval 합니다.
-    retriever = SparseRetrieval(
-        tokenize_fn=tokenize_fn, data_path=data_path, context_path=context_path
-    )
+    if data_args.retrieval_type == 'tfidf':
+        retriever = SparseRetrieval
+    elif data_args.retrieval_type == 'bm25':
+        retriever = BM25Retrieval
+
+    retriever = retriever(tokenize_fn=tokenize_fn, data_path=data_path, context_path=context_path)
     retriever.get_sparse_embedding()
 
-    if data_args.use_faiss:
-        retriever.build_faiss(num_clusters=data_args.num_clusters)
-        df = retriever.retrieve_faiss(
-            datasets["validation"], topk=data_args.top_k_retrieval
-        )
-    else:
-        df = retriever.retrieve(datasets["validation"], topk=data_args.top_k_retrieval)
+    df = retriever.retrieve(datasets["validation"], topk=data_args.top_k_retrieval)
 
     # test data 에 대해선 정답이 없으므로 id question context 로만 데이터셋이 구성됩니다.
     if training_args.do_predict:
@@ -142,6 +155,10 @@ def run_sparse_retrieval(
                     length=-1,
                     id=None,
                 ),
+<<<<<<< HEAD
+=======
+                "original_context": Value(dtype="string", id=None),
+>>>>>>> c20a5dd2b9cfa3945da6e6793e149cb54507af7d
                 "context": Value(dtype="string", id=None),
                 "id": Value(dtype="string", id=None),
                 "question": Value(dtype="string", id=None),
@@ -152,9 +169,9 @@ def run_sparse_retrieval(
 
 
 def run_mrc(
-    data_args: DataTrainingArguments,
+    data_args: DictConfig,
     training_args: TrainingArguments,
-    model_args: ModelArguments,
+    model_args: DictConfig,
     datasets: DatasetDict,
     tokenizer,
     model,
@@ -188,7 +205,7 @@ def run_mrc(
             stride=data_args.doc_stride,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
-            # return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
+            return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
             padding="max_length" if data_args.pad_to_max_length else False,
         )
 
@@ -306,4 +323,10 @@ def run_mrc(
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "--config_path", default="config/base_config.yaml", type=str, help=""
+    )
+    arg = parser.parse_args()
+    config = OmegaConf.load(arg.config_path)
+    main(config)
