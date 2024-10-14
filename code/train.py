@@ -45,7 +45,8 @@ def main(config):
         logging_steps=tr_args.logging_step,
         save_steps=tr_args.save_step,
         load_best_model_at_end=True,
-        metric_for_best_model='exact_match'
+        metric_for_best_model='exact_match',
+        overwrite_output_dir=tr_args.overwrite_output_dir,
     )
 
     if config.wandb.use:
