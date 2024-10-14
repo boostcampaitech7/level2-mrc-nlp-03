@@ -49,7 +49,7 @@ def main(config):
     )
 
     if config.wandb.use:
-        wandb.init(project=config.wandb.project, name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
+        wandb.init(project=config.wandb.project, entity="halfchicken_p2", name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
         training_args.report_to = ["wandb"]
     else:
         wandb.init(mode="disabled")
@@ -146,7 +146,7 @@ def run_mrc(
             stride=data_args.doc_stride,
             return_overflowing_tokens=True,
             return_offsets_mapping=True,
-            return_token_type_ids=False, # roberta모델을 사용할 경우 False, bert를 사용할 경우 True로 표기해야합니다.
+            return_token_type_ids=False if model.base_model_prefix == "roberta" else True,  # roberta모델을 사용할 경우 False, bert를 사용할 경우 True
             padding="max_length" if data_args.pad_to_max_length else False,
         )
 

@@ -119,7 +119,7 @@ def run_sparse_retrieval(
     datasets: DatasetDict,
     training_args: TrainingArguments,
     data_args: DictConfig,
-    data_path: str = "../data",
+    data_path: str = "../code/data",
     context_path: str = "wikipedia_documents.json",
 ) -> DatasetDict:
 
