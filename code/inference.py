@@ -155,10 +155,6 @@ def run_sparse_retrieval(
                     length=-1,
                     id=None,
                 ),
-<<<<<<< HEAD
-=======
-                "original_context": Value(dtype="string", id=None),
->>>>>>> c20a5dd2b9cfa3945da6e6793e149cb54507af7d
                 "context": Value(dtype="string", id=None),
                 "id": Value(dtype="string", id=None),
                 "question": Value(dtype="string", id=None),
