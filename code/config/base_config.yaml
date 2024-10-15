@@ -39,4 +39,4 @@ train:
 wandb:
   use: True
   project: odqa
-  name: roberta_finetune # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
+  name: sujin roberta_finetune # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
