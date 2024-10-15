@@ -47,6 +47,7 @@ def main(config):
         load_best_model_at_end=True,
         metric_for_best_model='exact_match',
         overwrite_output_dir=tr_args.overwrite_output_dir,
+        save_last=True,
     )
 
     if config.wandb.use:
