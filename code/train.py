@@ -45,7 +45,8 @@ def main(config):
         logging_steps=tr_args.logging_step,
         save_steps=tr_args.save_step,
         load_best_model_at_end=True,
-        metric_for_best_model='exact_match'
+        metric_for_best_model='exact_match',
+        overwrite_output_dir=tr_args.overwrite_output_dir,
     )
 
     if config.wandb.use:
@@ -70,7 +71,7 @@ def main(config):
     # 모델을 초기화하기 전에 난수를 고정합니다.
     set_seed(training_args.seed)
 
-    datasets = prepare_dataset(data_args.data_type, data_args.train_dataset_name)
+    datasets = prepare_dataset(data_args.data_type, data_args.train_dataset_name, data_args.newline_to_space)
     print(datasets)
 
     # AutoConfig를 이용하여 pretrained model 과 tokenizer를 불러옵니다.
