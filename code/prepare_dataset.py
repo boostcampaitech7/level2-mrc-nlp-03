@@ -1,7 +1,8 @@
 from datasets import DatasetDict, load_from_disk, load_dataset, concatenate_datasets
+from utils import replace_newline_with_space
 
 
-def prepare_dataset(data_type, train_dataset_name):
+def prepare_dataset(data_type, train_dataset_name, newline_to_space):
     """dataset load 및 return하는 function
 
     Args:
@@ -16,11 +17,19 @@ def prepare_dataset(data_type, train_dataset_name):
                 
         train_dataset_name: original dataset 경로
 
+        newline_to_space: True일 경우, \\n을 공백으로 바꿔줌. (original dataset에서만)
+
     Returns:
         DatasetDict: dataset
     """
     if data_type == 'original':
-        return load_from_disk(train_dataset_name)
+        if newline_to_space:
+            dataset = load_from_disk(train_dataset_name)
+            processed_data_no_newlines_tr = dataset['train'].map(replace_newline_with_space, batched=True)
+            processed_data_no_newlines_val = dataset['validation'].map(replace_newline_with_space, batched=True)
+            return DatasetDict({'train': processed_data_no_newlines_tr, 'validation': processed_data_no_newlines_val})
+        else:
+            return load_from_disk(train_dataset_name)
     
     elif data_type == 'korquad':
         return load_dataset("squad_kor_v1")

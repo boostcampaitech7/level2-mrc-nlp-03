@@ -19,6 +19,8 @@ data:
   use_faiss: False
   retrieval_type: bm25 # tfidf, bm25
   data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
+  newline_to_space: False # True일 경우, \\n을 공백으로 바꿔줌. (original dataset에서만)
+  
 
 train:
   batch_size: 16
@@ -40,4 +42,4 @@ train:
 wandb:
   use: True
   project: odqa
-  name: yunseo # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
+  name: name # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
