@@ -25,19 +25,19 @@ data:
 train:
   batch_size: 16
   max_epoch: 4
-  learning_rate: 9e-6 #3e-5 #9.0e-6
+  learning_rate: 3e-5 #3e-5 #9.0e-6
   eval_step: 500 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
   logging_step: 500 # 1000 # 500
   save_step: 500
   gradient_accumulation: 1
   do_train: True
-  do_eval: False
+  do_eval: True
   do_predict: False
   train_output_dir: models/roberta-large # roberta_korquad
   inference_output_dir: outputs/roberta-large
   seed: 42
   save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
-  overwrite_output_dir: False
+  overwrite_output_dir: True
 
 wandb:
   use: True
