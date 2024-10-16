@@ -53,12 +53,12 @@ def main(config):
         per_device_train_batch_size=tr_args.batch_size,
         per_device_eval_batch_size=tr_args.batch_size,
         evaluation_strategy="steps",
+        save_strategy="epoch",
         gradient_accumulation_steps=tr_args.gradient_accumulation,
         eval_steps=tr_args.eval_step,
         logging_steps=tr_args.logging_step,
-        save_steps=tr_args.save_step,
-        load_best_model_at_end=True,
-        metric_for_best_model='exact_match'
+        metric_for_best_model='exact_match',
+        fp16=tr_args.fp16,
     )
 
     training_args.do_train = True
