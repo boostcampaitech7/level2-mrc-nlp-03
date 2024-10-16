@@ -17,7 +17,7 @@ data:
   num_clusters: 64
   top_k_retrieval: 40
   use_faiss: False
-  retrieval_type: bm25 # tfidf, bm25
+  retrieval_type: bm25Plus # tfidf, bm25, bm25Plus
   data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
   newline_to_space: False # True일 경우, \\n을 공백으로 바꿔줌. (original dataset에서만)
   
@@ -25,13 +25,13 @@ data:
 train:
   batch_size: 16
   max_epoch: 4
-  learning_rate: 9e-6 #3e-5 #9.0e-6
+  learning_rate: 3e-5 #3e-5 #9.0e-6
   eval_step: 500 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
   logging_step: 500 # 1000 # 500
   save_step: 500
   gradient_accumulation: 1
   do_train: True
-  do_eval: False
+  do_eval: True
   do_predict: False
   train_output_dir: models/roberta-large # roberta_korquad
   inference_output_dir: outputs/roberta-large

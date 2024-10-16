@@ -24,6 +24,7 @@ from datasets import (
 )
 from retrieval.retrieval_sparse import SparseRetrieval
 from retrieval.retrieval_bm25 import BM25Retrieval
+from retrieval.retrieval_bm25Plus import BM25PlusRetrieval
 from trainer_qa import QuestionAnsweringTrainer
 from transformers import (
     AutoConfig,
@@ -127,7 +128,9 @@ def run_sparse_retrieval(
         retriever = SparseRetrieval
     elif data_args.retrieval_type == 'bm25':
         retriever = BM25Retrieval
-
+    elif data_args.retrieval_type == 'bm25Plus':
+        retriever = BM25PlusRetrieval
+        
     retriever = retriever(tokenize_fn=tokenize_fn, data_path=data_path, context_path=context_path)
     retriever.get_sparse_embedding()
 
