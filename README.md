@@ -1,4 +1,4 @@
-## 반반치킨 Team
+## 🍗반반치킨 Team
 
 |[정준한](https://github.com/??)|[이수진](https://github.com/??)|[육지훈](https://github.com/jihunyuk)|[전진](https://github.com/??)|[이금상](https://github.com/??)|[허윤서](https://github.com/??)|
 |:-:|:-:|:-:|:-:|:-:|:-:|
