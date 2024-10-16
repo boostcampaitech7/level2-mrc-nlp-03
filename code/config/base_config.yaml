@@ -37,7 +37,8 @@ train:
   inference_output_dir: outputs/roberta-large
   seed: 42
   save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
-  overwrite_output_dir: True
+  overwrite_output_dir: False
+  fp16: True # fp16을 사용할지 여부
 
 wandb:
   use: True
