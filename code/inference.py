@@ -53,12 +53,12 @@ def main(config):
         per_device_train_batch_size=tr_args.batch_size,
         per_device_eval_batch_size=tr_args.batch_size,
         evaluation_strategy="steps",
-        save_strategy="epoch",
         gradient_accumulation_steps=tr_args.gradient_accumulation,
         eval_steps=tr_args.eval_step,
         logging_steps=tr_args.logging_step,
-        metric_for_best_model='exact_match',
-        fp16=tr_args.fp16,
+        save_steps=tr_args.save_step,
+        load_best_model_at_end=True,
+        metric_for_best_model='exact_match'
     )
 
     training_args.do_train = True
@@ -112,7 +112,6 @@ def main(config):
     # eval or predict mrc model
     if training_args.do_eval or training_args.do_predict:
         run_mrc(data_args, training_args, model_args, datasets, tokenizer, model)
-
 
 def run_sparse_retrieval(
     tokenize_fn: Callable[[str], List[str]],
