@@ -1,5 +1,5 @@
 model:
-  model_name_or_path: klue/roberta-large # klue/roberta-large # models/roberta_original 훈련할때 쓸 모델명이나, 이어서 훈련하거나 추론할 모델경로
+  model_name_or_path: models/finetune_fp16_nonewline # klue/roberta-large # models/roberta_original 훈련할때 쓸 모델명이나, 이어서 훈련하거나 추론할 모델경로
   config_name: null
   tokenizer_name: null
   retrieval_tokenizer: monologg/koelectra-base-v3-finetuned-korquad # BM25로 retrieve할때만 쓰는 토크나이저 이름
@@ -7,6 +7,7 @@ model:
 data:
   train_dataset_name: ../data/train_dataset # ../data/train_dataset.csv, ../data/train_dataset
   inference_dataset_name: ../data/test_dataset
+  context_path: ../data/korean_ratio_0.40_up.json # context로 사용할 위키데이터셋 경로 # wikipedia_documents.json
   overwrite_cache: False
   preprocessing_num_workers: null
   max_seq_length: 384
@@ -17,24 +18,24 @@ data:
   num_clusters: 64
   top_k_retrieval: 40
   use_faiss: False
-  retrieval_type: bm25Plus # tfidf, bm25, bm25Plus
+  retrieval_type: bm25 # tfidf, bm25, bm25Plus
   data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
   newline_to_space: False # True일 경우, \\n을 공백으로 바꿔줌. (original dataset에서만)
   
 
 train:
-  batch_size: 16
+  batch_size: 32
   max_epoch: 4
   learning_rate: 3e-5 #3e-5 #9.0e-6
   eval_step: 500 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
   logging_step: 500 # 1000 # 500
   save_step: 500
   gradient_accumulation: 1
-  do_train: True
-  do_eval: True
-  do_predict: False
+  do_train: False
+  do_eval: False
+  do_predict: True
   train_output_dir: models/roberta-large # roberta_korquad
-  inference_output_dir: outputs/roberta-large
+  inference_output_dir: outputs/wiki_infer_nonewline
   seed: 42
   save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
   overwrite_output_dir: False
