@@ -5,9 +5,10 @@ model:
   retrieval_tokenizer: monologg/koelectra-base-v3-finetuned-korquad # BM25로 retrieve할때만 쓰는 토크나이저 이름
 
 data:
-  train_dataset_name: ../data/train_dataset # 훈련시 사용할 데이터셋 경로. csv파일 경로도 가능하다. # ../data/train_dataset.csv
-  inference_dataset_name: ../data/test_dataset # 변경 x
-  context_path: ../data/korean_ratio_0.40_up.json # context로 사용할 위키데이터셋 경로 # wikipedia_documents.json
+  train_dataset_name: /data/ephemeral/home/gs/level2-mrc-nlp-03/code/data/train_dataset # 훈련시 사용할 데이터셋 경로. csv파일 경로도 가능하다. # ../data/train_dataset.csv
+  inference_dataset_name: /data/ephemeral/home/gs/level2-mrc-nlp-03/code/data/train_dataset # 변경 x
+  context_path: /data/ephemeral/home/gs/level2-mrc-nlp-03/code/data/korean_ratio_0.40_up.json
+ # context로 사용할 위키데이터셋 경로 # wikipedia_documents.json
   overwrite_cache: False # 변경 x
   preprocessing_num_workers: null # 변경 x
   max_seq_length: 384 # 모델이 받아들이는 최대 context. # 512까지 가능하나 시간이 길어짐.
@@ -35,7 +36,8 @@ train:
   do_eval: False
   do_predict: True
   train_output_dir: models/roberta-large # 훈련한 모델이 저장될 경로
-  inference_output_dir: outputs/wiki_infer_nonewline # 추론 진행시 predictions.json이 저장되는 경로.
+  inference_output_dir: outputs/wiki_infer_withline_only_K
+# 추론 진행시 predictions.json이 저장되는 경로.
   seed: 42
   save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
   overwrite_output_dir: False # # train_output_dir이 이미 존재할 때, 덮어쓸지 여부. False로 설정하고, 이미 폴더가 있을 경우 에러발생.
@@ -45,4 +47,4 @@ wandb:
   use: True # wandb 사용여부. 추론할 때는, True로 해도 wandb 사용 안함.
   entity: halfchicken_p2 # 팀 이름
   project: odqa_finetuning
-  name: name # 개인 이름으로 설정. 이름 뒤에 model_name_epoch_bs_learning_rate이 붙음.
+  name: gs # 개인 이름으로 설정. 이름 뒤에 model_name_epoch_bs_learning_rate이 붙음.
