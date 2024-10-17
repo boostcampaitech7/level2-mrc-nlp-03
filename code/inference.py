@@ -119,19 +119,10 @@ def run_sparse_retrieval(
     training_args: TrainingArguments,
     data_args: DictConfig,
     data_path: str = "../code/data",
-    context_path: str = "korean_ratio_0.40_up.csv",
+    context_path: str = "korean_ratio_0.40_up.json",
 ) -> DatasetDict:
     
-    # CSV 파일 불러오기
-    if context_path.endswith('.csv'):
-        data = pd.read_csv(f"{data_path}/{context_path}")
-        # 컨텍스트로 사용할 컬럼 이름 지정 (예: 'context' 컬럼)
-        contexts = data['text'].tolist()
-    else:
-        # 다른 파일 형태의 경우 기존 방식 사용
-        with open(f"{data_path}/{context_path}", 'r') as f:
-            contexts = f.readlines()
-            
+
     if data_args.retrieval_type == 'tfidf':
         retriever = SparseRetrieval
     elif data_args.retrieval_type == 'bm25':
@@ -330,7 +321,7 @@ def run_mrc(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="")
     parser.add_argument(
-        "--config_path", default="config/base_config.yaml", type=str, help=""
+        "--config_path", default="config/inference_config.yaml", type=str, help=""
     )
     arg = parser.parse_args()
     config = OmegaConf.load(arg.config_path)
