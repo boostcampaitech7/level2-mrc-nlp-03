@@ -107,7 +107,7 @@ def main(config):
     # True일 경우 : run passage retrieval
     if data_args.eval_retrieval:
         datasets = run_sparse_retrieval(
-            retrieval_tokenizer.tokenize, datasets, training_args, data_args,
+            retrieval_tokenizer.tokenize, datasets, training_args, data_args, context_path=data_args.context_path
         )
 
     # eval or predict mrc model
