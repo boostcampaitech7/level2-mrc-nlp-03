@@ -88,20 +88,20 @@ def main(config):
     config = AutoConfig.from_pretrained(
         model_args.config_name
         if model_args.config_name
-        else model_args.model_name_or_path,
+        else model_args.model_name_or_path, use_auth_token = True,
     )
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name
         if model_args.tokenizer_name
         else model_args.model_name_or_path,
-        use_fast=True,
+        use_fast=True, use_auth_token = True,
     )
     model = AutoModelForQuestionAnswering.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
+        config=config, use_auth_token = True,
     )
-
+    
     retrieval_tokenizer = AutoTokenizer.from_pretrained(model_args.retrieval_tokenizer)
 
     # True일 경우 : run passage retrieval
