@@ -1,5 +1,5 @@
 model:
-  model_name_or_path: models/finetune_fp16_nonewline # huggingface에서 불러올 모델 or 저장된 모델 경로 # models/roberta_original
+  model_name_or_path: NLP03/finetune_fp16_withnewline # huggingface에서 불러올 모델 or 저장된 모델 경로 # models/roberta_original
   config_name: null # 변경 x
   tokenizer_name: null # 변경 x
   retrieval_tokenizer: monologg/koelectra-base-v3-finetuned-korquad # BM25로 retrieve할때만 쓰는 토크나이저 이름
