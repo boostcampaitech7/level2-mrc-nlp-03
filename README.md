@@ -68,6 +68,7 @@ model:
 data:
   train_dataset_name: ../data/train_dataset # 훈련시 사용할 데이터셋 경로. csv파일 경로도 가능하다. # ../data/train_dataset.csv
   inference_dataset_name: ../data/test_dataset # 변경 x
+  context_path: ../data/korean_ratio_0.40_up.json # context로 사용할 위키데이터셋 경로 # wikipedia_documents.json
   overwrite_cache: False # 변경 x
   preprocessing_num_workers: null # 변경 x
   max_seq_length: 384 # 모델이 받아들이는 최대 context. # 512까지 가능하나 시간이 길어짐.
@@ -88,7 +89,7 @@ train:
   learning_rate: 3e-5 #3e-5 #9.0e-6
   eval_step: 500 # 훈련 진행시 evaluate을 하는 간격
   logging_step: 500 # 1000 # 500 # 훈련 진행시 wandb에 로그가 찍히는 간격
-  save_step: # 훈련 진행시 모델을 저장하는 간격
+  save_step: 500 # 훈련 진행시 모델을 저장하는 간격인데 사용안함
   gradient_accumulation: 1
   do_train: True
   do_eval: True

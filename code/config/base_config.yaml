@@ -1,48 +1,48 @@
 model:
-  model_name_or_path: models/finetune_fp16_nonewline # klue/roberta-large # models/roberta_original 훈련할때 쓸 모델명이나, 이어서 훈련하거나 추론할 모델경로
-  config_name: null
-  tokenizer_name: null
+  model_name_or_path: models/finetune_fp16_nonewline # huggingface에서 불러올 모델 or 저장된 모델 경로 # models/roberta_original
+  config_name: null # 변경 x
+  tokenizer_name: null # 변경 x
   retrieval_tokenizer: monologg/koelectra-base-v3-finetuned-korquad # BM25로 retrieve할때만 쓰는 토크나이저 이름
 
 data:
-  train_dataset_name: ../data/train_dataset # ../data/train_dataset.csv, ../data/train_dataset
-  inference_dataset_name: ../data/test_dataset
+  train_dataset_name: ../data/train_dataset # 훈련시 사용할 데이터셋 경로. csv파일 경로도 가능하다. # ../data/train_dataset.csv
+  inference_dataset_name: ../data/test_dataset # 변경 x
   context_path: ../data/korean_ratio_0.40_up.json # context로 사용할 위키데이터셋 경로 # wikipedia_documents.json
-  overwrite_cache: False
-  preprocessing_num_workers: null
-  max_seq_length: 384
-  pad_to_max_length: False
+  overwrite_cache: False # 변경 x
+  preprocessing_num_workers: null # 변경 x
+  max_seq_length: 384 # 모델이 받아들이는 최대 context. # 512까지 가능하나 시간이 길어짐.
+  pad_to_max_length: False # 변경 x
   doc_stride: 128
   max_answer_length: 100
-  eval_retrieval: True
-  num_clusters: 64
-  top_k_retrieval: 40
-  use_faiss: False
-  retrieval_type: bm25 # tfidf, bm25, bm25Plus
-  data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조
-  newline_to_space: False # True일 경우, \\n을 공백으로 바꿔줌. (original dataset에서만)
+  eval_retrieval: True # 변경 x
+  num_clusters: 64 # 변경 x
+  top_k_retrieval: 40 # topk
+  use_faiss: False # 변경 x
+  retrieval_type: bm25 # [tfidf, bm25, bm25Plus]에서 택1. 사용할 retriever 종류.
+  data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조. train시 Korquad 1.0과 기존 데이터셋 중 사용할 데이터셋 선택 가능.
+  newline_to_space: False # True일 경우, train할 때 context를 \\n을 공백으로 바꿔주고 train함
   
 
 train:
   batch_size: 32
   max_epoch: 4
   learning_rate: 3e-5 #3e-5 #9.0e-6
-  eval_step: 500 # batch와 epoch에 따라 step수가 결정되는데 적절히 조절. total step = 7978(train samples 토큰화되서 늘어난 개수. tokenizer에 따라 다름) * epoch / batch_size
-  logging_step: 500 # 1000 # 500
-  save_step: 500
+  eval_step: 500 # 훈련 진행시 evaluate을 하는 간격
+  logging_step: 500 # 1000 # 500 # 훈련 진행시 wandb에 로그가 찍히는 간격
+  save_step: 500 # 훈련 진행시 모델을 저장하는 간격인데 사용안함
   gradient_accumulation: 1
   do_train: False
   do_eval: False
   do_predict: True
-  train_output_dir: models/roberta-large # roberta_korquad
-  inference_output_dir: outputs/wiki_infer_nonewline
+  train_output_dir: models/roberta-large # 훈련한 모델이 저장될 경로
+  inference_output_dir: outputs/wiki_infer_nonewline # 추론 진행시 predictions.json이 저장되는 경로.
   seed: 42
   save_total_limit: 1 # 학습 중 저장할 모델의 최대 개수. 설정된 개수만큼 저장되면, 새로운 모델을 저장할 때 성능이 좋은 모델을 남기고 성능이 떨어지는 모델은 자동으로 삭제됨.
-  overwrite_output_dir: False
-  fp16: True # fp16을 사용할지 여부
+  overwrite_output_dir: False # # train_output_dir이 이미 존재할 때, 덮어쓸지 여부. False로 설정하고, 이미 폴더가 있을 경우 에러발생.
+  fp16: True # fp16을 사용할지 여부. True로 하면 속도가 더 빨라지고 가벼워짐.(성능하락은 별로 없어서 True로 고정)
 
 wandb:
-  use: True
-  entity: halfchicken_p2
+  use: True # wandb 사용여부. 추론할 때는, True로 해도 wandb 사용 안함.
+  entity: halfchicken_p2 # 팀 이름
   project: odqa_finetuning
-  name: name # model_name_epoch_bs_learning_rate이 wandb name으로 붙는데 그 앞에 붙을 접두어
+  name: name # 개인 이름으로 설정. 이름 뒤에 model_name_epoch_bs_learning_rate이 붙음.
