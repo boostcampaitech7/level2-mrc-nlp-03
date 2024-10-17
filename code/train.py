@@ -50,7 +50,7 @@ def main(config):
     )
 
     if config.wandb.use:
-        wandb.init(project=config.wandb.project, entity='halfchicken_p2', name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
+        wandb.init(project=config.wandb.project, entity=config.wandb.entity, name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
         training_args.report_to = ["wandb"]
     else:
         wandb.init(mode="disabled")

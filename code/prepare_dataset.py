@@ -1,5 +1,5 @@
 from datasets import DatasetDict, load_from_disk, load_dataset, concatenate_datasets
-from utils import replace_newline_with_space
+from utils import replace_newline_with_space, parse_answer_column
 
 
 def prepare_dataset(data_type, train_dataset_name, newline_to_space):
@@ -23,12 +23,23 @@ def prepare_dataset(data_type, train_dataset_name, newline_to_space):
         DatasetDict: dataset
     """
     if data_type == 'original':
+        # train_dataset_name에 csv가 포함되어 있으면 csv 파일을 load
+        if 'csv' in train_dataset_name:
+            train_dataset = load_dataset('csv', data_files={"train": train_dataset_path})['train']
+            validation_dataset = load_dataset('csv', data_files={"validation": validation_dataset_path})['validation']
+            
+            train_dataset = train_dataset.map(parse_answer_column, batched=True)
+            validation_dataset = validation_dataset.map(parse_answer_column, batched=True)
+            return DatasetDict({"train": train_dataset, "validation": validation_dataset})
+
+        # train_dataset_name에 csv가 포함되어 있지 않으면 load_from_disk로 load
+        # newline_to_space가 True일 경우, \\n을 공백으로 바꿔줌
         if newline_to_space:
             dataset = load_from_disk(train_dataset_name)
             processed_data_no_newlines_tr = dataset['train'].map(replace_newline_with_space, batched=True)
             processed_data_no_newlines_val = dataset['validation'].map(replace_newline_with_space, batched=True)
             return DatasetDict({'train': processed_data_no_newlines_tr, 'validation': processed_data_no_newlines_val})
-        else:
+        else: # newline_to_space가 False일 경우
             return load_from_disk(train_dataset_name)
     
     elif data_type == 'korquad':
