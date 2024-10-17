@@ -81,7 +81,7 @@ data:
   use_faiss: False # 변경 x
   retrieval_type: bm25Plus # [tfidf, bm25, bm25Plus]에서 택1. 사용할 retriever 종류.
   data_type: original # [original, korquad, korquad_hard] 중 택1. 자세한 것은 prepare_dataset.py 참조. train시 Korquad 1.0과 기존 데이터셋 중 사용할 데이터셋 선택 가능.
-  newline_to_space: False # True일 경우, train할 때 context를 \\n을 공백으로 바꿔주고 train함. (data_type: original을 설정할때만 적용됨. korquad는 True로 해도 데이터셋 전처리를 진행하지 않음)
+  newline_preprocess: space # [remove, space] 중 택1. remove일 경우, train할 때 context를 \\n을 공백으로 바꿔주고 train함 (data_type: original을 설정할때만 적용됨. korquad는 True로 해도 데이터셋 전처리를 진행하지 않음)
   
 train:
   batch_size: 16
