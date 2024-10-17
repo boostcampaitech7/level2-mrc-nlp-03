@@ -13,6 +13,12 @@ def replace_newline_with_space(examples):
     examples['context'] = [context.replace('\\n', ' ') for context in examples['context']]
     return examples
 
+# 'answers' 열이 문자열인 경우, ast.literal_eval을 사용하여 변환
+def parse_answer_column(examples):
+    if isinstance(examples['answers'][0], str):
+        examples['answers'] = [ast.literal_eval(answer) for answer in examples['answers']]
+    return examples
+
 
 if __name__ == "__main__":
     # 함수 테스트입니다. 

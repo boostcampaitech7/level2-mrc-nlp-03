@@ -1,3 +1,19 @@
+## 🍗반반치킨 Team
+
+|[정준한](https://github.com/??)|[이수진](https://github.com/??)|[육지훈](https://github.com/jihunyuk)|[전진](https://github.com/??)|[이금상](https://github.com/??)|[허윤서](https://github.com/??)|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|<a href="https://github.com/??"><img src="profile/바로핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/차차핑.png" width='300px'></a>|<a href="https://github.com/jihunyuk"><img src="profile/하츄핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/라라핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/해핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/아자핑.png" width='300px'></a>|
+
+## Members' Role
+| Member | Role | 
+| --- | --- |
+| 정준한 | 실험 세팅, BM25, rerank, DPR 구현 및 실험 |
+| 이수진 | 협업 툴 관리, 실험 세팅, KorQuAD Fine-tuning, Curriculum Learning, Hyperparameter Tuning |
+| 육지훈 | EDA, Scheduler 실험, 성능 검증 코드 제작, Data Length 관련 실험, Inference 후처리, Ensemble |
+| 전진 | Pre-trained 모델 실험, KorQuAD Pre-training  |
+| 이금상 | EDA, Pre-trained 모델 실험, Elasticsearch, NER tagging |
+| 허윤서 | EDA, Pre-trained 모델 실험, Elasticsearch, NER tagging |
+
 ### 0. 설치
 
 - pre-commit을 위해 아래 명령어를 실행해주세요.
