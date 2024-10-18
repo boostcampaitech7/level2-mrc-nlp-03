@@ -118,3 +118,9 @@ models/
 .vscode/
 .idea/
 __MACOSX/
+
+# ret_test big files
+ret_test/exp_plus_result
+ret_test/exp_result
+ret_test/pickle
+ret_test/*.csv
