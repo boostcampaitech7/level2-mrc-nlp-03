@@ -40,16 +40,17 @@ def main(config):
         per_device_train_batch_size=tr_args.batch_size,
         per_device_eval_batch_size=tr_args.batch_size,
         evaluation_strategy="steps",
+        save_strategy="epoch",
         gradient_accumulation_steps=tr_args.gradient_accumulation,
         eval_steps=tr_args.eval_step,
         logging_steps=tr_args.logging_step,
-        save_steps=tr_args.save_step,
-        load_best_model_at_end=True,
-        metric_for_best_model='exact_match'
+        metric_for_best_model='exact_match',
+        overwrite_output_dir=tr_args.overwrite_output_dir,
+        fp16=tr_args.fp16,
     )
 
     if config.wandb.use:
-        wandb.init(project=config.wandb.project, entity='halfchicken_p2', name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
+        wandb.init(project=config.wandb.project, entity=config.wandb.entity, name=config.wandb.name + f'{model_args.model_name_or_path}_ep{tr_args.max_epoch}_bs{tr_args.batch_size}_lr{tr_args.learning_rate}')
         training_args.report_to = ["wandb"]
     else:
         wandb.init(mode="disabled")
@@ -70,7 +71,7 @@ def main(config):
     # 모델을 초기화하기 전에 난수를 고정합니다.
     set_seed(training_args.seed)
 
-    datasets = prepare_dataset(data_args.data_type, data_args.train_dataset_name)
+    datasets = prepare_dataset(data_args.data_type, data_args.train_dataset_name, data_args.newline_preprocess)
     print(datasets)
 
     # AutoConfig를 이용하여 pretrained model 과 tokenizer를 불러옵니다.
