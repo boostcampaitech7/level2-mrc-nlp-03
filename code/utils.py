@@ -13,6 +13,19 @@ def replace_newline_with_space(examples):
     examples['context'] = [context.replace('\\n', ' ') for context in examples['context']]
     return examples
 
+# context에서 \\n 뒤를 띄어쓰기하는 함수
+def add_space_after_newline(examples):
+    # answer_start 조정
+    for i, answer in enumerate(examples['answers']):
+        answer_start = answer['answer_start'][0]
+        new_line_count = (examples['context'][i][:answer_start]).count('\\n')
+        new_answer_start = answer_start + new_line_count # \\n이 ' '으로 대체되므로 1개당 -1. (\\n은 2글자입니다..)
+        answer['answer_start'][0] = new_answer_start
+    
+    # context 처리
+    examples['context'] = [context.replace('\\n', '\\n ') for context in examples['context']]
+    return examples
+
 # 'answers' 열이 문자열인 경우, ast.literal_eval을 사용하여 변환
 def parse_answer_column(examples):
     if isinstance(examples['answers'][0], str):
@@ -23,7 +36,7 @@ def parse_answer_column(examples):
 if __name__ == "__main__":
     # 함수 테스트입니다. 
     dataset = load_from_disk('../data/train_dataset')
-    processed_data_no_newlines_tr = dataset['train'].map(replace_newline_with_space, batched=True)
+    processed_data_no_newlines_tr = dataset['train'].map(add_space_after_newline, batched=True)
 
     print('*** original dataset ***')
     for answer in dataset['train']['answers'][:5]:
