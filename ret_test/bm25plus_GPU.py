@@ -173,7 +173,7 @@ class BM25L(BM25):
 
 
 class BM25PlusGPU(BM25):
-    def __init__(self, corpus, tokenizer=None, k1=1.5, b=0.75, delta=1):
+    def __init__(self, corpus, tokenizer=None, k1=1.5, b=0.75, delta=1, use_gpu=True):
         # Algorithm specific parameters
         self.k1 = k1
         self.b = b
