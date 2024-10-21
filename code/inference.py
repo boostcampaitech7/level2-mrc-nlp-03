@@ -115,17 +115,8 @@ def main(config):
         run_mrc(data_args, training_args, model_args, datasets, tokenizer, model)
 
 
-def custom_tokenize_fn(text):
-    tokens = list(text)
-    
-    particles = ['은', '는', '이', '가', '을', '를', '에', '의', '도']
-    tokens = [token for token in tokens if token not in particles]
-    
-    bi_grams = [tokens[i] + tokens[i+1] for i in range(len(tokens) - 1)]
-    return bi_grams
-
 def run_sparse_retrieval(
-    tokenize_fn: Callable[[str], List[str]],  
+    tokenize_fn: Callable[[str], List[str]],
     datasets: DatasetDict,
     training_args: TrainingArguments,
     data_args: DictConfig,
@@ -139,12 +130,13 @@ def run_sparse_retrieval(
         retriever = BM25Retrieval
     elif data_args.retrieval_type == 'bm25Plus':
         retriever = BM25PlusRetrieval
-    
-    retriever = retriever(tokenize_fn=custom_tokenize_fn, data_path=data_path, context_path=context_path)
+        
+    retriever = retriever(tokenize_fn=tokenize_fn, data_path=data_path, context_path=context_path)
     retriever.get_sparse_embedding()
 
     df = retriever.retrieve(datasets["validation"], topk=data_args.top_k_retrieval)
 
+    # test data 에 대해선 정답이 없으므로 id question context 로만 데이터셋이 구성됩니다.
     if training_args.do_predict:
         f = Features(
             {
@@ -154,6 +146,7 @@ def run_sparse_retrieval(
             }
         )
 
+    # train data 에 대해선 정답이 존재하므로 id question context answer 로 데이터셋이 구성됩니다.
     elif training_args.do_eval:
         f = Features(
             {
@@ -171,9 +164,9 @@ def run_sparse_retrieval(
                 "question": Value(dtype="string", id=None),
             }
         )
-        
     datasets = DatasetDict({"validation": Dataset.from_pandas(df, features=f)})
     return datasets
+
 
 def run_mrc(
     data_args: DictConfig,
