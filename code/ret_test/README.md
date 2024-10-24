@@ -2,6 +2,7 @@
 이 디렉토리는 다양한 리트리버 방식을 테스트하고 성능을 확인하기 위해 사용됩니다. 
 
 ## 디렉토리 구조
+```
 ret_test
 ├── exp_data/
 │   ├── unq_wikipedia_documents.json    # 중복 제거 처리한 wiki json 파일 (용량 문제로 첨부하지 않음)         
@@ -9,6 +10,7 @@ ret_test
 ├── exp_result/                         # 실험 결과 저장 경로
 ├── pickle/                             # 토크나이징 결과 저장 경로
 └── ret_exp.ipynb                       # 최종 실험 노트북 파일
+```
 
 ## 사용 방법
 1. 데이터 준비
