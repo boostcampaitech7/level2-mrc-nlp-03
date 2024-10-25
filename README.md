@@ -7,12 +7,12 @@
 ## Members' Role
 | Member | Role | 
 | --- | --- |
-| 정준한 | 실험 세팅, BM25, rerank, DPR 구현 및 실험 |
-| 이수진 | 협업 툴 관리, 실험 세팅, KorQuAD Fine-tuning, Curriculum Learning, Hyperparameter Tuning |
-| 육지훈 | EDA, Scheduler 실험, 성능 검증 코드 제작, Data Length 관련 실험, Inference 후처리, Ensemble |
-| 전진 | Pre-trained 모델 실험, KorQuAD Pre-training  |
-| 이금상 | EDA, Pre-trained 모델 실험, Elasticsearch, NER tagging |
-| 허윤서 | EDA, Pre-trained 모델 실험, Elasticsearch, NER tagging |
+| 정준한 | EDA, 코드 모듈화, BM25 추가, 도메인 적응 코드 추가 |
+| 이수진 | BM25 Plus추가, Pre-trained 모델 실험, 리트리버 성능 실험 |
+| 육지훈 | EDA, 하이퍼파라미터 서치, 성능 검증 코드 제작, Inference 후처리 |
+| 전진 | EDA, 리트리버 실험 설계, 리트리버 성능 개선  |
+| 이금상 | EDA, Pre-trained 모델 실험, 리트리버 성능 실험 |
+| 허윤서 | Retrieved data EDA, Cross, Bi-encoder DPR & Re-rank |
 
 ### 0. 설치
 
