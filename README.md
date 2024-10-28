@@ -1,6 +1,6 @@
 ## 🍗반반치킨 Team
 
-|[정준한](https://github.com/??)|[이수진](https://github.com/??)|[육지훈](https://github.com/jihunyuk)|[전진](https://github.com/??)|[이금상](https://github.com/??)|[허윤서](https://github.com/??)|
+|[정준한](https://github.com/??)|[이수진](https://github.com/??)|[육지훈](https://github.com/jihunyuk)|[전진](https://github.com/jeenie2727)|[이금상](https://github.com/??)|[허윤서](https://github.com/??)|
 |:-:|:-:|:-:|:-:|:-:|:-:|
 |<a href="https://github.com/??"><img src="profile/바로핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/차차핑.png" width='300px'></a>|<a href="https://github.com/jihunyuk"><img src="profile/하츄핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/라라핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/해핑.png" width='300px'></a>|<a href="https://github.com/??"><img src="profile/아자핑.png" width='300px'></a>|
 
@@ -128,6 +128,8 @@ level2-mrc-nlp-03/code/
 |   |-- retrieval_bm25Plus.py
 |   |-- retrieval_sparse.py
 |
+|-- ret_test/ # Retrieve 실험용 코드 모음
+
 |-- wandb
 |
 |-- inference.py
