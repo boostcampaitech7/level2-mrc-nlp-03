@@ -14,6 +14,10 @@
 | 이금상 | EDA, Pre-trained 모델 실험, 리트리버 성능 실험 |
 | 허윤서 | Retrieved data EDA, Cross, Bi-encoder DPR & Re-rank |
 
+### 랩업 리포트
+
+<iframe src="https://github.com/boostcampaitech7/level2-mrc-nlp-03/blob/main/profile/MRC_NLP_%ED%8C%80%20%EB%A6%AC%ED%8F%AC%ED%8A%B8(03%EC%A1%B0).pdf "width="100%" height="500px"></iframe>
+
 ### 0. 설치
 
 - pre-commit을 위해 아래 명령어를 실행해주세요.
