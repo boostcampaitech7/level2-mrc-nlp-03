@@ -15,7 +15,7 @@
 | 허윤서 | Retrieved data EDA, Cross, Bi-encoder DPR & Re-rank |
 
 ### 랩업 리포트
-|<a href="https://github.com/boostcampaitech7/level2-mrc-nlp-03/blob/main/profile/MRC_NLP_%ED%8C%80%20%EB%A6%AC%ED%8F%AC%ED%8A%B8(03%EC%A1%B0).pdf"><img src="profile/report.jpg" width='300px'>
+- [Wrap-up report](profile/MRC_NLP_%ED%8C%80%20%EB%A6%AC%ED%8F%AC%ED%8A%B8(03%EC%A1%B0).pdf)
 
 ### 0. 설치
 
